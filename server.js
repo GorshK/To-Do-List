@@ -4,6 +4,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import userRoutes from './routes/userRoutes.js';
 import taskRoutes from './routes/taskRoutes.js';
+import authRoutes from './routes/authRoutes.js'; // <-- New line
 
 // Configuration
 dotenv.config();
@@ -12,7 +13,7 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000', // Lock down in production
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
   credentials: true
 }));
 app.use(express.json({ limit: '10mb' }));
@@ -21,20 +22,19 @@ app.use(express.json({ limit: '10mb' }));
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI, {
-      serverSelectionTimeoutMS: 5000,  // 5s timeout
-      socketTimeoutMS: 45000,         // 45s socket timeout
-      maxPoolSize: 10,                // Connection pool size
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+      maxPoolSize: 10,
       retryWrites: true,
       w: 'majority'
     });
     console.log('✅ MongoDB Connected');
   } catch (err) {
     console.error('❌ MongoDB Connection Error:', err.message);
-    process.exit(1); // Exit on connection failure
+    process.exit(1);
   }
 };
 
-// Connection Event Listeners
 mongoose.connection.on('connected', () => console.log('MongoDB event: Connected'));
 mongoose.connection.on('disconnected', () => console.log('MongoDB event: Disconnected'));
 mongoose.connection.on('error', (err) => console.error('MongoDB runtime error:', err));
@@ -42,6 +42,7 @@ mongoose.connection.on('error', (err) => console.error('MongoDB runtime error:',
 // Routes
 app.use('/api/users', userRoutes);
 app.use('/api/tasks', taskRoutes);
+app.use('/api/auth', authRoutes);  // <-- New line
 
 // Health Check
 app.get('/health', (req, res) => res.status(200).json({ status: 'OK' }));
