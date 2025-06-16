@@ -13,7 +13,7 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: process.env.FRONTEND_URL || 'https://to-do-list-frontend-dmk044acx-gorshs-projects.vercel.app/',
   credentials: true
 }));
 app.use(express.json({ limit: '10mb' }));
